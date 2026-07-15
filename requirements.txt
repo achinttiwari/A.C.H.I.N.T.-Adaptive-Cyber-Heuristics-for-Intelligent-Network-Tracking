@@ -1,60 +1,167 @@
-# =============================================================================
-# requirements.txt — Reproducible Python Environment
-# =============================================================================
-# AI-Driven Network Traffic Anomaly Detection Pipeline
-#
-# Install:
-#   pip install -r requirements.txt
-#
-# All versions are pinned for full reproducibility.
-# Tested on Python 3.10 / 3.11 / 3.12.
-# =============================================================================
+=============================================================================
 
-# ---------------------------------------------------------------------------
-# Core scientific stack
-# ---------------------------------------------------------------------------
-numpy==1.26.4           # Numerical arrays; underpins all ML libraries
-pandas==2.2.2           # DataFrame manipulation for network flow CSVs
-scipy==1.13.1           # Statistical utilities (used internally by sklearn)
+requirements.txt — Reproducible Python ML Environment
 
-# ---------------------------------------------------------------------------
-# Machine Learning — Scikit-Learn
-# ---------------------------------------------------------------------------
-scikit-learn==1.5.1     # Random Forest, preprocessing, metrics, model selection
+=============================================================================
 
-# ---------------------------------------------------------------------------
-# Gradient Boosting
-# ---------------------------------------------------------------------------
-xgboost==2.0.3          # XGBoost classifier with GPU support
+Project: AI-Driven Network Traffic Anomaly Detection Pipeline
 
-# ---------------------------------------------------------------------------
-# Class Imbalance Handling
-# ---------------------------------------------------------------------------
-imbalanced-learn==0.12.3  # SMOTE implementation (wraps sklearn)
+Execution Environment:
 
-# ---------------------------------------------------------------------------
-# Deep Learning — TensorFlow (CPU+GPU via CUDA auto-detection)
-# ---------------------------------------------------------------------------
-tensorflow==2.16.1      # Keras MLP; includes GPU support via CUDA 12.x
-# If you prefer PyTorch instead, comment the line above and uncomment:
-# torch==2.3.1
-# torchvision==0.18.1
+- Tested across Python 3.10, 3.11, and 3.12.
 
-# ---------------------------------------------------------------------------
-# Visualisation & Reporting
-# ---------------------------------------------------------------------------
-matplotlib==3.9.1       # ROC, PR, and confusion matrix plots
-seaborn==0.13.2         # Enhanced statistical plots (optional, imported in evaluator)
+- For optimal C-extension compatibility and parallel processing,
 
-# ---------------------------------------------------------------------------
-# Utilities
-# ---------------------------------------------------------------------------
-tqdm==4.66.4            # Progress bars for long data-loading loops
-joblib==1.4.2           # Model serialisation, parallel processing
-PyYAML==6.0.1           # Reading YAML config files (cloud deployment)
+Python 3.11 is highly recommended.
 
-# ---------------------------------------------------------------------------
-# Cloud / AWS (optional — required only for SageMaker execution)
-# ---------------------------------------------------------------------------
-boto3==1.34.131         # AWS SDK — S3 data access, SageMaker API
-sagemaker==2.224.4      # SageMaker Python SDK for managed training jobs
+Installation:
+
+python -m venv .venv
+
+source .venv/bin/activate  # Linux/macOS
+
+pip install --upgrade pip
+
+pip install -r requirements.txt
+
+MLOps Philosophy:
+
+All versions are strictly pinned (==) to guarantee deterministic builds,
+
+preventing dependency drift in CI/CD pipelines and production deployments.
+
+=============================================================================
+
+---------------------------------------------------------------------------
+
+1. Data Engineering & Core Scientific Stack
+
+---------------------------------------------------------------------------
+
+High-throughput data ingestion is critical for Network Intrusion Detection
+
+Systems (NIDS). These libraries handle the parsing of massive NetFlow, IPFIX,
+
+or PCAP-derived CSV files.
+
+numpy==1.26.4           # Foundational tensor logic. Vectorized operations are
+# critical for calculating packet inter-arrival times
+# and flow durations at scale without Python loop overhead.
+
+pandas==2.2.2           # DataFrame manipulation. Version 2.x introduces the
+# PyArrow backend, which significantly reduces memory
+# footprints and speeds up string operations (crucial
+# for parsing IP addresses, MACs, and protocol labels).
+
+scipy==1.13.1           # Advanced statistical utilities and sparse matrix support.
+# Used for efficient One-Hot Encoding of high-cardinality
+# network features (like port numbers 0-65535).
+
+---------------------------------------------------------------------------
+
+2. Machine Learning — Core & Ensembles
+
+---------------------------------------------------------------------------
+
+Tabular data (which network flows ultimately are) is notoriously well-suited
+
+for tree-based ensembles and unsupervised isolation techniques.
+
+scikit-learn==1.5.1     # Industry standard for feature scaling (StandardScaler),
+# dimensionality reduction (PCA for payload sizes), and
+# baseline models (Isolation Forest for zero-day
+# unsupervised anomaly detection).
+
+xgboost==2.0.3          # Extreme Gradient Boosting. Often outperforms deep learning
+# on tabular network data (e.g., CIC-IDS2017 datasets).
+# Supports HistGradientBoosting for distributed training
+# and native handling of missing packet data.
+
+---------------------------------------------------------------------------
+
+3. Class Imbalance Handling
+
+---------------------------------------------------------------------------
+
+Network traffic is inherently skewed (often 99.9% benign, 0.1% malicious).
+
+Standard accuracy metrics and loss functions fail here.
+
+imbalanced-learn==0.12.3  # Provides SMOTE (Synthetic Minority Over-sampling
+# Technique) and ADASYN to synthetically generate
+# minority class examples (e.g., rare APT lateral
+# movement or specific zero-day exploits) to prevent
+# the classifier from simply predicting "Normal" always.
+
+---------------------------------------------------------------------------
+
+4. Deep Learning — Representation Learning
+
+---------------------------------------------------------------------------
+
+Used for complex feature extraction and sequential anomaly detection.
+
+tensorflow==2.16.1      # Keras deep learning backend. Essential for building
+# Autoencoders (unsupervised reconstruction loss for
+# anomaly scoring) or LSTMs for sequential packet
+# payload inspection. Includes XLA (Accelerated Linear
+# Algebra) compilation and CUDA 12.x GPU support.
+
+NOTE: To use PyTorch ecosystem instead (preferred in many top NLP/CV labs),
+
+comment tensorflow above and use the pinned versions below:
+
+torch==2.3.1          # PyTorch core (requires appropriate CUDA wheel via index-url)
+
+torchvision==0.18.1   # For CNN-based packet byte-plot classification approaches
+
+---------------------------------------------------------------------------
+
+5. Visualisation, Metrics, and Reporting
+
+---------------------------------------------------------------------------
+
+ROC curves can be misleading for highly imbalanced NIDS data; Precision-Recall
+
+(PR) curves and Confusion Matrices are the industry standard.
+
+matplotlib==3.9.1       # Foundational plotting library for generating static
+# metric charts for model registry documentation.
+
+seaborn==0.13.2         # High-level API for matplotlib. Used for visualizing
+# network feature correlation matrices to identify
+# multicollinearity in flow statistics (e.g., total
+# bytes vs. total packets).
+
+---------------------------------------------------------------------------
+
+6. Utilities & MLOps Infrastructure
+
+---------------------------------------------------------------------------
+
+tqdm==4.66.4            # Low-overhead progress bars, essential for monitoring
+# long-running data loader loops over terabytes of logs.
+
+joblib==1.4.2           # Model serialization. Vastly superior to native pickle
+# for saving large scikit-learn models (like Random
+# Forests) because it is optimized for large NumPy arrays.
+
+PyYAML==6.0.1           # Follows the 12-factor app methodology. Used to parse
+# hyperparameter grids, feature lists, and cloud
+# environment variables from config.yaml files.
+
+---------------------------------------------------------------------------
+
+7. Cloud / Managed Training (AWS Ecosystem)
+
+---------------------------------------------------------------------------
+
+Optional: Required only if shifting from local/on-prem training to the cloud.
+
+boto3==1.34.131         # AWS SDK. Used for streaming large PCAP/CSV datasets
+# directly from Amazon S3 buckets without blowing up
+# local disk storage.
+
+sagemaker==2.224.4      # AWS SageMaker SDK. Orchestrates managed training jobs,
+# provisions ephemeral GPU spot instances for cost
+# savings, and logs model artifacts to the Model Registry.
