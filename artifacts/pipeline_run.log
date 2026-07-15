@@ -1,0 +1,212 @@
+2026-05-24 04:10:10 | INFO     | main | ======================================================================
+2026-05-24 04:10:10 | INFO     | main |   AI-Driven Network Traffic Anomaly Detection — Training Pipeline
+2026-05-24 04:10:10 | INFO     | main | ======================================================================
+2026-05-24 04:10:10 | INFO     | main | 
+[STAGE 1/4] Data loading and splitting ...
+2026-05-24 04:10:10 | INFO     | pipeline.data_loader | Found 1 CSV file(s) to load.
+2026-05-24 04:10:10 | INFO     | pipeline.data_loader |   Loading: synthetic_cicids2017.csv
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Raw dataset shape: (50200, 79)
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Dropped columns: [' Timestamp']
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Cleaned dataset shape: (50200, 78)
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Raw label distribution:
+label
+BENIGN                      40000
+DDoS                         3000
+PortScan                     2500
+FTP-Patator                  1000
+SSH-Patator                  1000
+DoS Hulk                     1000
+DoS GoldenEye                 500
+DoS slowloris                 500
+DoS Slowhttptest              250
+Web Attack – Brute Force      150
+Web Attack – XSS              100
+Bot                           100
+Infiltration                   50
+Heartbleed                     50
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Binary label distribution — BENIGN: 79.7%, ATTACK: 20.3%
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Using STRATIFIED RANDOM split.
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Split sizes — Train: 35139 | Val: 7531 | Test: 7530
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Train set — BENIGN: 27999 (79.7%), ATTACK: 7140 (20.3%)
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Val set — BENIGN: 6001 (79.7%), ATTACK: 1530 (20.3%)
+2026-05-24 04:10:11 | INFO     | pipeline.data_loader | Test set — BENIGN: 6000 (79.7%), ATTACK: 1530 (20.3%)
+2026-05-24 04:10:11 | INFO     | main | Stage 1 complete in 1.0 s.
+
+2026-05-24 04:10:11 | INFO     | main | [STAGE 2/4] Preprocessing (imputation → scaling → SMOTE) ...
+2026-05-24 04:10:11 | INFO     | pipeline.preprocessor | Fitting preprocessor on training data ...
+2026-05-24 04:10:11 | INFO     | pipeline.preprocessor | Imputation complete — strategy: median | remaining NaN: 0
+2026-05-24 04:10:11 | INFO     | pipeline.preprocessor | Scaling complete — scaler: standard
+2026-05-24 04:10:11 | INFO     | pipeline.preprocessor | Applying SMOTE — class distribution before: {0: 27999, 1: 7140}
+2026-05-24 04:10:12 | INFO     | pipeline.preprocessor | SMOTE complete — class distribution after:  {0: 27999, 1: 27999} | new samples generated: 20859
+2026-05-24 04:10:12 | INFO     | pipeline.preprocessor | Preprocessor fit complete. Final training set shape: X=(55998, 77) | y=(55998,)
+2026-05-24 04:10:12 | INFO     | pipeline.preprocessor | Preprocessor saved to: /home/runner/workspace/ml-pipeline/artifacts/preprocessor.pkl
+2026-05-24 04:10:12 | INFO     | main | Stage 2 complete in 0.4 s.
+
+2026-05-24 04:10:12 | INFO     | main | [STAGE 3/4] Model training ...
+2026-05-24 04:10:12 | INFO     | pipeline.trainer | 
+============================================================
+  Training Model 1/3: Random Forest
+============================================================
+2026-05-24 04:10:12 | INFO     | pipeline.models.random_forest | [RandomForest] Starting training | n_estimators=200 | n_samples=55998 | n_features=77
+2026-05-24 04:10:27 | INFO     | pipeline.models.random_forest | [RandomForest] Training complete.
+2026-05-24 04:10:27 | INFO     | pipeline.models.random_forest | [RandomForest] Validation — Accuracy: 1.0000 | AUC-ROC: 1.0000
+2026-05-24 04:10:27 | INFO     | pipeline.models.random_forest | [RandomForest] Top-10 feature importance indices (descending): [4, 46, 44, 14, 2, 13, 1, 3, 0, 42]
+2026-05-24 04:10:27 | INFO     | pipeline.models.random_forest | [RandomForest] Model saved to: /home/runner/workspace/ml-pipeline/artifacts/models/random_forest.pkl
+2026-05-24 04:10:27 | INFO     | pipeline.trainer | 
+============================================================
+  Training Model 2/3: XGBoost
+============================================================
+2026-05-24 04:10:27 | INFO     | pipeline.models.xgboost_model | [XGBoost] Starting training | n_estimators=300 | max_depth=6 | learning_rate=0.0500 | n_samples=55998
+2026-05-24 04:10:29 | INFO     | pipeline.models.xgboost_model | [XGBoost] Training complete — best_iteration: 281 | best_val_logloss: 0.0003
+2026-05-24 04:10:29 | INFO     | pipeline.models.xgboost_model | [XGBoost] Model saved to: /home/runner/workspace/ml-pipeline/artifacts/models/xgboost.json
+2026-05-24 04:10:29 | INFO     | pipeline.trainer | 
+============================================================
+  Training Model 3/3: Deep Learning (MLP)
+============================================================
+2026-05-24 04:10:31 | INFO     | pipeline.models.deep_learning | [DeepLearning] Building model | input_dim=77 | hidden_layers=[256, 128, 64] | dropout=0.30
+2026-05-24 04:10:31 | INFO     | pipeline.models.deep_learning | [DeepLearning] Class weights: {0: 1.0, 1: 1.0}
+2026-05-24 04:10:31 | INFO     | pipeline.models.deep_learning | [DeepLearning] Starting training | epochs=50 | batch_size=1024 | patience=10
+2026-05-24 04:10:44 | INFO     | pipeline.models.deep_learning | [DeepLearning] Training complete — best_epoch: 8 | best_val_auc: 0.9999
+2026-05-24 04:10:44 | INFO     | pipeline.models.deep_learning | [DeepLearning] Model saved to: /home/runner/workspace/ml-pipeline/artifacts/models/deep_learning.keras
+2026-05-24 04:10:44 | INFO     | pipeline.trainer | 
+All models trained and saved to: /home/runner/workspace/ml-pipeline/artifacts/models/
+2026-05-24 04:10:44 | INFO     | main | Stage 3 complete in 32.5 s.
+
+2026-05-24 04:10:44 | INFO     | main | [STAGE 4/4] Evaluating all models on ISOLATED test set ...
+2026-05-24 04:10:44 | INFO     | main | Test set size: 7530 samples | Attack rate: 20.32%
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | ======================================================================
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | EVALUATION REPORT — RandomForest (threshold=0.50)
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | ======================================================================
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | 
+Confusion Matrix:
+                Predicted BENIGN  Predicted ATTACK
+  True BENIGN            6000               0
+  True ATTACK               0            1530
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | 
+Core Metrics:
+  Accuracy         : 1.0000
+  Precision        : 1.0000
+  Recall (TPR)     : 1.0000
+  F1-Score         : 1.0000
+  False Positive Rate (FPR)  : 0.0000  ← CRITICAL for IDS
+  False Negative Rate (FNR)  : 0.0000
+  Specificity (TNR): 1.0000
+  MCC              : 1.0000
+  Cohen's Kappa    : 1.0000
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | 
+Full Classification Report:
+              precision    recall  f1-score   support
+
+      BENIGN     1.0000    1.0000    1.0000      6000
+      ATTACK     1.0000    1.0000    1.0000      1530
+
+    accuracy                         1.0000      7530
+   macro avg     1.0000    1.0000    1.0000      7530
+weighted avg     1.0000    1.0000    1.0000      7530
+
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | AUC-ROC: 1.0000
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | AUC-PR (Average Precision): 1.0000
+2026-05-24 04:10:44 | INFO     | pipeline.evaluator | Report saved to: /home/runner/workspace/ml-pipeline/artifacts/reports/RandomForest_report.json
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | Confusion matrix plot saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/RandomForest_cm.png
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | ROC curve saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/RandomForest_roc.png
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | PR curve saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/RandomForest_pr_curve.png
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | ======================================================================
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | EVALUATION REPORT — XGBoost (threshold=0.50)
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | ======================================================================
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | 
+Confusion Matrix:
+                Predicted BENIGN  Predicted ATTACK
+  True BENIGN            5999               1
+  True ATTACK               0            1530
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | 
+Core Metrics:
+  Accuracy         : 0.9999
+  Precision        : 0.9993
+  Recall (TPR)     : 1.0000
+  F1-Score         : 0.9997
+  False Positive Rate (FPR)  : 0.0002  ← CRITICAL for IDS
+  False Negative Rate (FNR)  : 0.0000
+  Specificity (TNR): 0.9998
+  MCC              : 0.9996
+  Cohen's Kappa    : 0.9996
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | 
+Full Classification Report:
+              precision    recall  f1-score   support
+
+      BENIGN     1.0000    0.9998    0.9999      6000
+      ATTACK     0.9993    1.0000    0.9997      1530
+
+    accuracy                         0.9999      7530
+   macro avg     0.9997    0.9999    0.9998      7530
+weighted avg     0.9999    0.9999    0.9999      7530
+
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | AUC-ROC: 1.0000
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | AUC-PR (Average Precision): 1.0000
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | Report saved to: /home/runner/workspace/ml-pipeline/artifacts/reports/XGBoost_report.json
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | Confusion matrix plot saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/XGBoost_cm.png
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | ROC curve saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/XGBoost_roc.png
+2026-05-24 04:10:45 | INFO     | pipeline.evaluator | PR curve saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/XGBoost_pr_curve.png
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | ======================================================================
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | EVALUATION REPORT — DeepLearning (threshold=0.50)
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | ======================================================================
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | 
+Confusion Matrix:
+                Predicted BENIGN  Predicted ATTACK
+  True BENIGN            5971              29
+  True ATTACK               6            1524
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | 
+Core Metrics:
+  Accuracy         : 0.9954
+  Precision        : 0.9813
+  Recall (TPR)     : 0.9961
+  F1-Score         : 0.9886
+  False Positive Rate (FPR)  : 0.0048  ← CRITICAL for IDS
+  False Negative Rate (FNR)  : 0.0039
+  Specificity (TNR): 0.9952
+  MCC              : 0.9858
+  Cohen's Kappa    : 0.9857
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | 
+Full Classification Report:
+              precision    recall  f1-score   support
+
+      BENIGN     0.9990    0.9952    0.9971      6000
+      ATTACK     0.9813    0.9961    0.9886      1530
+
+    accuracy                         0.9954      7530
+   macro avg     0.9902    0.9956    0.9929      7530
+weighted avg     0.9954    0.9954    0.9954      7530
+
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | AUC-ROC: 0.9999
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | AUC-PR (Average Precision): 0.9997
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | Report saved to: /home/runner/workspace/ml-pipeline/artifacts/reports/DeepLearning_report.json
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | Confusion matrix plot saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/DeepLearning_cm.png
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | ROC curve saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/DeepLearning_roc.png
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | PR curve saved to: /home/runner/workspace/ml-pipeline/artifacts/plots/DeepLearning_pr_curve.png
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | 
+----------------------------------------------------------------------------
+MODEL COMPARISON TABLE
+----------------------------------------------------------------------------
+Metric                          RandomForest         XGBoost    DeepLearning
+----------------------------------------------------------------------------
+accuracy                              1.0000          0.9999          0.9954
+precision                             1.0000          0.9993          0.9813
+recall_tpr                            1.0000          1.0000          0.9961
+f1_score                              1.0000          0.9997          0.9886
+false_positive_rate                   0.0000          0.0002          0.0048
+false_negative_rate                   0.0000          0.0000          0.0039
+specificity_tnr                       1.0000          0.9998          0.9952
+mcc                                   1.0000          0.9996          0.9858
+auc_roc                               1.0000          1.0000          0.9999
+auc_pr                                1.0000          1.0000          0.9997
+----------------------------------------------------------------------------
+2026-05-24 04:10:46 | INFO     | pipeline.evaluator | Model comparison saved to: /home/runner/workspace/ml-pipeline/artifacts/reports/model_comparison.json
+2026-05-24 04:10:46 | INFO     | main | 
+======================================================================
+2026-05-24 04:10:46 | INFO     | main |   Pipeline completed successfully in 36.1 s (0.6 min).
+2026-05-24 04:10:46 | INFO     | main |   Artefacts written to: /home/runner/workspace/ml-pipeline/artifacts
+2026-05-24 04:10:46 | INFO     | main |     ├── models/        — trained model files
+2026-05-24 04:10:46 | INFO     | main |     ├── reports/       — JSON evaluation reports + comparison
+2026-05-24 04:10:46 | INFO     | main |     ├── plots/         — ROC, PR, and confusion matrix figures
+2026-05-24 04:10:46 | INFO     | main |     └── pipeline_run.log
+2026-05-24 04:10:46 | INFO     | main | ======================================================================
+

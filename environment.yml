@@ -1,0 +1,69 @@
+# =============================================================================
+# environment.yml — Conda Reproducible Environment
+# =============================================================================
+# AI-Driven Network Traffic Anomaly Detection Pipeline
+#
+# Create environment:
+#   conda env create -f environment.yml
+#
+# Activate:
+#   conda activate ids-pipeline
+#
+# Export current environment (after adding packages):
+#   conda env export --no-builds > environment.yml
+#
+# Cloud note:
+#   On AWS SageMaker, use a pre-built TensorFlow container and install
+#   additional packages via a requirements.txt passed to the estimator's
+#   pip_requirements argument.
+# =============================================================================
+
+name: ids-pipeline
+
+channels:
+  - conda-forge        # Community-maintained, more up-to-date than defaults
+  - defaults
+
+dependencies:
+  # -------------------------------------------------------------------------
+  # Python runtime — pinned for reproducibility
+  # -------------------------------------------------------------------------
+  - python=3.11.9
+
+  # -------------------------------------------------------------------------
+  # Core scientific stack
+  # -------------------------------------------------------------------------
+  - numpy=1.26.4
+  - pandas=2.2.2
+  - scipy=1.13.1
+
+  # -------------------------------------------------------------------------
+  # Machine Learning
+  # -------------------------------------------------------------------------
+  - scikit-learn=1.5.1
+
+  # -------------------------------------------------------------------------
+  # Visualisation
+  # -------------------------------------------------------------------------
+  - matplotlib=3.9.1
+  - seaborn=0.13.2
+
+  # -------------------------------------------------------------------------
+  # Utilities
+  # -------------------------------------------------------------------------
+  - tqdm=4.66.4
+  - joblib=1.4.2
+  - pyyaml=6.0.1
+  - pip                # Ensure pip is available for the pip section below
+
+  # -------------------------------------------------------------------------
+  # Packages best installed via pip (no stable conda-forge build at these
+  # exact versions, or require CUDA-aware pip wheel selection)
+  # -------------------------------------------------------------------------
+  - pip:
+    - xgboost==2.0.3
+    - imbalanced-learn==0.12.3
+    # TensorFlow: pip selects the correct CUDA wheel automatically
+    - tensorflow==2.16.1
+    - boto3==1.34.131
+    - sagemaker==2.224.4

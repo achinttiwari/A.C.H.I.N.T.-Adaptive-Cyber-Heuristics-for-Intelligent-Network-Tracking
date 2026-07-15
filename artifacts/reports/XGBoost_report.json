@@ -1,0 +1,25 @@
+{
+  "model_name": "XGBoost",
+  "threshold": 0.5,
+  "n_test_samples": 7530,
+  "n_attack_samples": 1530,
+  "n_benign_samples": 6000,
+  "confusion_matrix": {
+    "tn": 5999,
+    "fp": 1,
+    "fn": 0,
+    "tp": 1530
+  },
+  "accuracy": 0.9999,
+  "precision": 0.9993,
+  "recall_tpr": 1.0,
+  "f1_score": 0.9997,
+  "false_positive_rate": 0.0002,
+  "false_negative_rate": 0.0,
+  "specificity_tnr": 0.9998,
+  "mcc": 0.9996,
+  "cohen_kappa": 0.9996,
+  "auc_roc": 1.0,
+  "auc_pr": 1.0,
+  "classification_report": "              precision    recall  f1-score   support\n\n      BENIGN     1.0000    0.9998    0.9999      6000\n      ATTACK     0.9993    1.0000    0.9997      1530\n\n    accuracy                         0.9999      7530\n   macro avg     0.9997    0.9999    0.9998      7530\nweighted avg     0.9999    0.9999    0.9999      7530\n"
+}
