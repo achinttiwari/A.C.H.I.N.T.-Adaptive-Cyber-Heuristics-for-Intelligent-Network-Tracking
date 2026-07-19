@@ -1,120 +1,74 @@
-# Achint-Shield
-A.C.H.I.N.T. (Adaptive Cyber Heuristics for Intelligent Network Tracking) is an experimental research framework designed to detect, classify, and track anomalous and malicious activity across network telemetry in near real time. It blends adaptive heuristic rules with data-driven machine learning so that lightweight, interpretable heuristics can be combined with statistical and learned detectors to improve detection coverage and reduce false positives. The project targets operational network monitoring, threat hunting, and research into hybrid detection strategies that remain robust under concept drift and adversarial behavior.
+![A.C.H.I.N.T. Cybersecurity](https://img.magnific.com/premium-photo/mysterious-figure-digital-world-representing-themes-cybersecurity-hacking-data-protection-with-vibrant-visuals_1301918-6116.jpg?semt=ais_hybrid&w=740&q=80)
 
-Goals and Design Principles
-Adaptive layering — combine fast, explainable heuristics with slower, higher‑fidelity ML models so alerts can be triaged by confidence and cost.
+# 🛡️ A.C.H.I.N.T.
+> **Adaptive Cyber Heuristics for Intelligent Network Tracking**
 
-Modularity — separate ingestion, feature engineering, model training, and inference so components can be swapped or extended independently.
+Welcome to the frontier of operational network defense. **A.C.H.I.N.T.** is an experimental, near real-time research framework engineered to detect, classify, and track anomalous and malicious network activity. 
 
-Reproducibility — provide deterministic preprocessing, versioned datasets, and training artifacts to reproduce experiments.
+By brilliantly fusing **lightning-fast, interpretable heuristics** with **data-driven machine learning**, A.C.H.I.N.T. delivers unparalleled detection coverage while crushing false positives. Designed to thrive under concept drift and adversarial attacks, this is the ultimate toolkit for threat hunting, SOC monitoring, and cutting-edge hybrid detection research.
 
-Operational readiness — produce compact alert artifacts (CSV/JSON) and lightweight inference code suitable for integration with SIEMs or stream processors.
+---
 
-Privacy aware — favor aggregated and metadata features over raw payload storage to reduce privacy and compliance risk.
+## 🎯 Goals & Design Principles
 
-Architecture and Core Components
-High level flow
+We built A.C.H.I.N.T. on five uncompromising pillars:
 
-Ingest — raw PCAPs, NetFlow, or CSV telemetry are normalized into a canonical flow/record schema.
+*   🧠 **Adaptive Layering:** Combine the blazing speed of explainable heuristics with the high-fidelity deep reasoning of ML models. Triage alerts by true confidence and operational cost.
+*   🧩 **Fierce Modularity:** Ingestion, feature engineering, training, and inference are totally decoupled. Swap, scale, or extend components without breaking a sweat.
+*   ♻️ **Absolute Reproducibility:** Deterministic preprocessing, versioned datasets, and clean training artifacts mean your experiments are verifiable every single time.
+*   🚀 **Operational Readiness:** Built for the real world. Outputs compact alert artifacts (CSV/JSON) and lightweight inference code ready to plug straight into your SIEM or stream processors.
+*   🔒 **Privacy by Design:** We prioritize aggregated metrics and metadata over raw payload hoarding, drastically slashing privacy and compliance risks.
 
-Preprocess — cleaning, sessionization, and enrichment (DNS, GeoIP, ASN) produce consistent inputs for feature extraction.
+---
 
-Feature extraction — time windowed statistics, protocol-specific counters, behavioral baselines, and engineered indicators (e.g., burstiness, entropy, uncommon ports).
+## 🏗️ Architecture & Core Components
 
-Heuristic layer — rule engine with adaptive thresholds and scoring that encodes domain knowledge for immediate, explainable alerts.
+### 🌊 The High-Level Flow
+1.  **📥 Ingest:** Raw PCAPs, NetFlow, or CSV telemetry are ingested and normalized into a pristine, canonical record schema.
+2.  **✨ Preprocess:** Cleaning, sessionization, and powerful enrichments (DNS, GeoIP, ASN) forge the foundation.
+3.  **📊 Extract:** Time-windowed stats, protocol counters, and engineered indicators (entropy, burstiness, odd ports) map out behavioral baselines.
+4.  **⚡ Heuristic Layer:** The domain-knowledge engine. Adaptive thresholds and scoring provide immediate, explainable, zero-day alerts.
+5.  **🤖 Model Layer:** Deep detectors (supervised classifiers and unsupervised anomaly scorers) hunt for complex, engineered attack patterns.
+6.  **⚖️ Decision Fusion:** The brain of the operation. Heuristic scores and ML outputs fuse into high-confidence alerts loaded with provenance and triage context.
+7.  **💾 Storage & Export:** Alerts, traces, and metrics are securely archived to `runs/` and `models/` for seamless audit and retraining.
 
-Model layer — supervised and unsupervised detectors (classifiers, anomaly scorers) trained on engineered features; supports ensemble scoring.
+### 📂 Key Modules
+*   `src/ingest` — Battle-tested parsers and normalizers.
+*   `src/preprocess` — Sessionization, enrichment, and dataset builders.
+*   `src/features` — Advanced feature calculators and temporal windowing utilities.
+*   `src/heuristics` — Rule definitions, adaptive thresholding, and the scoring API.
+*   `src/models` — ML training, evaluation, and blazing-fast inference wrappers.
+*   `src/fusion` — The intelligent logic combining heuristics and ML.
 
-Decision fusion — combines heuristic scores and model outputs into final alerts with confidence, provenance, and suggested triage actions.
+---
 
-Storage and export — alerts, traces, and metrics saved to runs/ and models/ for audit and retraining.
+## ⚙️ Data Pipeline & ML Engine
 
-Key modules
+### 🔬 Feature Engineering
+*   **Temporal Windows:** Sliding and tumbling windows designed to catch everything from micro-burst attacks to low-and-slow campaigns.
+*   **Statistical Summaries:** Mean, variance, percentiles, interarrival times, and Shannon entropy.
+*   **Categorical Encodings:** Protocol mapping, port clustering, ASN tracking, and domain reputation.
+*   **Behavioral Baselines:** Dynamic per-host and per-subnet profiling to ruthlessly expose deviations.
 
-src/ingest — parsers and normalizers for PCAP/CSV/flow formats.
+### 🧠 Modeling Approaches
+*   **Supervised Classifiers:** Tree ensembles and lightweight neural networks targeting known attack vectors.
+*   **Unsupervised Detectors:** Isolation forests, One-Class SVMs, and density estimators seeking out the unknown.
+*   **Hybrid Ensembles:** Dynamically reweighted fusion of heuristics and models, adapting to performance in real-time.
+*   **Rigorous Evaluation:** Time-aware cross-validation splits, PR curves, ROC/AUC, and strict operational metrics (MTTD, alert volume).
 
-src/preprocess — sessionization, enrichment, and dataset builders.
+---
 
-src/features — feature calculators and windowing utilities.
+## 🎮 Usage Scenarios & Commands
 
-src/heuristics — rule definitions, adaptive threshold manager, and scoring API.
+Whether you are defending the perimeter or breaking it, A.C.H.I.N.T. is your weapon of choice.
 
-src/models — training, evaluation, and inference wrappers for ML models.
+*   **🚨 Real-Time Monitoring:** Stream telemetry through the pipeline for prioritized, actionable SOC alerts.
+*   **🕵️ Threat Hunting:** Leverage Jupyter notebooks and feature sets to pivot on indicators and hunt down suspicious hosts.
+*   **🧪 Model Research:** Benchmark experimental feature sets against archived datasets and track victories in your runs directory.
+*   **💥 Red Team Validation:** Replay synthetic attack traces or PCAPs to stress-test your detection coverage and tune thresholds.
 
-src/fusion — logic to combine heuristic and model outputs into actionable alerts.
+### 🔥 Quickstart Commands
 
-Data Pipeline and Modeling Details
-Feature engineering
-
-Temporal windows — sliding and tumbling windows to capture short bursts and long-term trends.
-
-Statistical summaries — mean, variance, percentiles, interarrival times, and entropy measures.
-
-Categorical encodings — protocol, port clusters, ASN, and domain reputation buckets.
-
-Behavioral baselines — per-host and per-subnet baselines to compute deviation scores.
-
-Modeling approaches
-
-Supervised classifiers — tree ensembles and lightweight neural nets for labeled attack classes.
-
-Unsupervised detectors — isolation forests, one-class SVMs, and density estimators for novel anomalies.
-
-Hybrid ensembles — weighted fusion of heuristic scores and model confidences; supports dynamic reweighting based on recent performance.
-
-Evaluation — cross validation with time-aware splits, precision/recall curves, ROC/AUC, and operational metrics like alert volume and mean time to detect.
-
-Usage Scenarios and Examples
-Real time monitoring — run the inference pipeline on streaming telemetry to generate prioritized alerts for SOC analysts.
-
-Threat hunting — use notebooks and saved features to explore suspicious hosts, pivot on indicators, and validate hypotheses.
-
-Model research — benchmark new feature sets or detectors against archived datasets in data/ and track results in runs/.
-
-Red team validation — replay PCAPs or synthetic attack traces through the pipeline to measure detection coverage and tuning needs.
-
-Example commands
-
-Preprocess raw captures: python src/preprocess.py --input data/raw --output data/processed
-
-Train baseline model: python src/train.py --data data/processed --out models/
-
-Run inference on a sample: python src/infer.py --model models/best.pt --input data/processed/sample.csv
-
-Evaluation, Limitations, and Future Work
-Evaluation focus
-
-Operational metrics — alert precision at fixed recall, false positive rate per host, and analyst workload estimates.
-
-Robustness tests — concept drift simulations, adversarial perturbations, and dataset imbalance handling.
-
-Known limitations
-
-Label scarcity — supervised components depend on labeled attacks which may be limited or biased.
-
-Dataset bias — models trained on specific network environments may not generalize without domain adaptation.
-
-Resource constraints — some detectors require tuning to run at scale in high-throughput environments.
-
-Planned improvements
-
-Online learning — incremental model updates to adapt to drift without full retraining.
-
-Active learning — analyst-in-the-loop labeling to improve supervised detectors efficiently.
-
-Stream-native deployment — connectors for Kafka/Fluentd and lightweight inference containers for edge deployment.
-
-Explainability — richer provenance and per-feature contribution scores for each alert.
-
-Contribution, Citation, and Contact
-How to contribute
-
-Fork the repo, create a feature branch, add tests and documentation, and open a PR. Follow PEP8 and include unit tests for new functionality. Use the existing notebooks as templates for experiments and include reproducible requirements.txt updates when adding dependencies.
-
-How to cite
-
-If you use A.C.H.I.N.T. in research, cite the repository and any accompanying paper or technical report included in the repo. Include version or commit hash for reproducibility.
-
-Maintainer and contact
-
-See the repository README header and LICENSE for maintainer contact details and licensing terms. For research collaboration or dataset questions, open an issue or pull request describing your use case.
+**Preprocess raw captures:**
+```bash
+python src/preprocess.py --input data/raw --output data/processed
